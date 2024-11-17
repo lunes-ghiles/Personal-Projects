@@ -1,3 +1,14 @@
+"""Finance Functions v.0.1
+
+A binomial option tree pricing model function I have created during my time at the University of Toronto based
+on material from  Derivative Markets and International Financial Management. Constantly
+being updated to include more course material and general improvements. Definitely need to take into account data-scraping with
+yfinance and also create a Black-Scholes function to add to here.
+
+Copyright (c) 2024 Lunes Maibeche
+
+"""
+
 import numpy as np
 import time
 import cProfile
