@@ -14,16 +14,12 @@ import numba
 # TO-DO LIST:
 #   1. Create an alternative put branch for european no dividend [X] 
 #   2. Create an American early exercise checker [X]
-#   3. Improve that runtime! [X]
+#   3. Improve that runtime! []
 #   4. Implement dividends branch []
 #   5. Further refine for stock indexes, currencies, futures [X]
 #   6. Create doctests [X]
-#   7. Check in with professor []
-#   8. Debug and further refinement (maybe worth asking a CS prof) []
 #   9. Check edge cases and make more user-friendly with prompts []
 #   10. Implement yfinance stock price checker, rf checker, volatility checker and dividend checker []
-#   11. Check with professor once again (to verify the finished product) []
-#   12. Upload onto your github []
 # 1.399594 secs with numba vs 1.387312 seconds without but on average numba looks faster - might need to look into
 # fixing the print answer problem
 
@@ -124,7 +120,7 @@ def binomial_tree(spot_price: float, strike_price: float, time_to_maturity: floa
     elapsed_time = end_time - start_time
     print(f"European option price generation runtime: {elapsed_time:.6f} seconds")  # 0.817160 seconds to execute
 
-    # This step is fucked, it doesn't really work
+    # This step is messed up, it doesn't really work, need to find a way to recalculate option prices without additionaal runtime
     print('Generating American option prices in tree...')
     start_time = time.perf_counter()
 
@@ -156,7 +152,7 @@ def binomial_tree(spot_price: float, strike_price: float, time_to_maturity: floa
 # call_prices = np.maximum(end_layer_prices - strike_price, 0.0)
 # put_prices = np.maximum(strike_price - end_layer_prices, 0.0)
 
-# Collapse everything back to find call price for european option (USE FOR LOOP, FASTER)
+# Collapse everything back to find call price for european option (USE FOR LOOP INSTEAD OF WHILE)
 # while len(call_prices) > 1:
 #    call_prices = np.maximum(0, dsc * (pd * call_prices[1:] + pu * call_prices[:-1]))
 #    put_prices = np.maximum(0, dsc * (pd * put_prices[1:] + pu * put_prices[:-1]))
