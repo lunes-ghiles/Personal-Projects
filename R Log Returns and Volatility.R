@@ -9,7 +9,7 @@ library(quantmod)
 # Definitely want to incorporate quantmod to automatically scrape data []
 # Statistical tests on the test statistics such as hypothesis testing,
 # p-values, Confidence Intervals, Likelihood Ratio Test, ect []
-# Streamline my vectorized operations - that is one ugly for loop []
+# Streamline my vectorized operations - that is one ugly FOR loop []
 
 # Log Returns is something I will certainly need in future in order to apply any more advanced financial modelling. Best 
 # to make this as efficient as I can.
