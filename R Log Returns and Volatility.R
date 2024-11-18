@@ -11,6 +11,8 @@ library(quantmod)
 # p-values, Confidence Intervals, Likelihood Ratio Test, ect []
 # Streamline my vectorized operations - that is one ugly for loop []
 
+# Log Returns is something I will certainly need in future in order to apply any more advanced financial modelling. Best 
+# to make this as efficient as I can.
 log_stats <- function(timeframe){
   stock_history = paste0("/Users/lunesm/Desktop/NVDA_", timeframe, ".csv")
   stockinfo <- read.csv(stock_history, header = TRUE, stringsAsFactors = TRUE)
