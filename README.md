@@ -1,2 +1,6 @@
 This is a collection of projects I'm pursuing in order to apply what I'm learning in mathematics and statistics courses to the concepts I'm learning in Finance courses.
 While probably not very technically advanced (yet!), I'm constantly working to improve runtimes, algorithms used and apply the frameworks introduced in the Fields House Quantitative Finance Seminars.
+
+Some highlights we have here are R tools, which has an implementation of R functions. One is initializing a data frame with a given stock's information, a time frame and whether we want log returns and arithmetic returns (assumed to be daily). The other is calculating the 99% one-day VaR under the Variance-Covariance approach. Furthermore, we also have an implementation of a Historical Simulation VaR estimation for a portfolio tracking multiple indices from across the world and a more sophisticated implementation of a VaR calculation by estimating the covariance matrix and returns vector for a 2 stock portfolio.
+
+Another is a series of ML implementations including a Polynomial Regression model, a RBF Regression model, a KNN classification model application to identifying hand written digits and a Logistic Regression model using Batch Gradient Descent Algorithm, with a bonus application to predicting loan rejection.
