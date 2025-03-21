@@ -21,6 +21,7 @@ import numba
 # 1. First thing would be having to set p, u and d
 # 2. Generate end nodes and get option value there
 # 3. Collapse back to the present
+# Note it's essentially just a recurisve binary tree
 
 # TO-DO LIST:
 #   1. Create an alternative put branch for european no dividend [X] 
@@ -51,45 +52,22 @@ def binomial_tree(spot_price: float, strike_price: float, time_to_maturity: floa
 
     # Precalculate essential variables
     print('Creating starting variables...')
-    function_start = time.perf_counter()
-    start_time = time.perf_counter()
     result = {'European': {'Call': 0.0, 'Put': 0.0}, 'American': {'Call': 0.0, 'Put': 0.0}}
     dt = time_to_maturity / steps  # Intervals of time between steps
     u = np.exp(volatility * np.sqrt(dt))  # Up factor
     d = 1 / u  # Down factor
     dsc = np.exp(-r * dt)  # Risk-free continuously compounding discounting by one dt
 
-    if type == 'stock':
-        pu = (np.exp(r * dt) - d) / (u - d)  # Risk-neutral probability of going up for stock options
-
-    if type == 'index':
-        q = float(input('Please input dividend yield \' q \' in the form \'0.xxx\'.'))
-        pu = (exp((r - q) * dt) - d) / (u - d)  # Risk-neutral probability of going up for index options
-
-    if type == 'currency':
-        rf = float(input('Please input foreign risk-free rate \' rf \' in the form \'0.xxx\'.'))
-        pu = (exp((r - rf) * dt) - d) / (u - d)  # Risk-neutral probability of going up for currency options
-
-    if type == 'future':
-        pu = (1 - d) / (u - d)  # Risk-neutral probability of going up for futures options
-
-    else:
-        print("INVALID ASSET TYPE, RETURNING EMPTY RESULT")
-        return result
-
+    pu = (np.exp((r - q) * dt) - d) / (u - d)  # Risk-neutral probability of going up for index options
+    function_start = time.perf_counter()
+    start_time = time.perf_counter()
     pud = dsc * pu
     pd = 1 - pu  # Risk-neutral probability of going down for stock options
     pdd = dsc * pd
-    # This step takes 0.000016 seconds
 
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
     print(f"Variables runtime: {elapsed_time:.6f} seconds")  # 0.00029 seconds to execute
-
-    # Consider the loop - requires sum_i=1^n+1 (i + 2) operations per cycle, as opposed to sum_i=1^n+1 (n + 1)
-    # operations; fairly easy to see it's more computationally efficient (note this doesn't even account for the fact
-    # n is in fact multiple FLOPs each time, so easily outstrips the # of FLOPs in i fairly quickly for all terms
-    # until i = n-1 at least
 
     print('Generating spot prices in tree...')
     start_time = time.perf_counter()
@@ -131,12 +109,21 @@ def binomial_tree(spot_price: float, strike_price: float, time_to_maturity: floa
     elapsed_time = end_time - start_time
     print(f"European option price generation runtime: {elapsed_time:.6f} seconds")  # 0.817160 seconds to execute
 
-    # This step is messed up, it doesn't really work, need to find a way to recalculate option prices without additionaal runtime
+    # This step takes way too long, there must be a way to integrate it into the european step
     print('Generating American option prices in tree...')
     start_time = time.perf_counter()
 
-    american_call = np.maximum(american_call, call_prices)
-    american_put = np.maximum(american_put, put_prices)
+    # The loop is the problematic part, but how else can I do this...
+    for N in np.arange(steps - 1, -1, -1):
+        recursive_call = pud * american_call[:N + 1, N + 1] + pdd * american_call[1:N + 2, N + 1]
+        recursive_put = pud * american_put[:N + 1, N + 1] + pdd * american_put[1:N + 2, N + 1]
+
+        early_exercise_call = spot_prices[:N + 1, N] - strike_price
+        early_exercise_put = strike_price - spot_prices[:N + 1, N]
+
+        american_call[:N + 1, N] = np.maximum(recursive_call, early_exercise_call)
+        american_put[:N + 1, N] = np.maximum(recursive_put, early_exercise_put)
+
     result['American']['Call'] = float(american_call[0, 0])
     result['American']['Put'] = float(american_put[0, 0])
 
@@ -149,8 +136,8 @@ def binomial_tree(spot_price: float, strike_price: float, time_to_maturity: floa
     function_time_elapse = end_time - function_start
     print(f"Tree generation runtime: {tree_time_elapse:.6f} seconds")  # 3.929894 seconds to execute total
     print(f"Function runtime: {function_time_elapse:.6f} seconds")  # 3.929934 seconds to execute total
-
     return result
+
 
 # If you want to implement a specifier, could be done pretty easily
 # option_type = option_info.split()[1]
