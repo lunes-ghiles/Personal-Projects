@@ -1,5 +1,6 @@
 # I am now starting to realize that oop would have been a better approach to this
 # but hey, functional programming is always a fun time
+# Also, this project is currently on hold due to a lack of data
 
 import pandas as pd
 import yfinance as yf
@@ -22,6 +23,8 @@ db_name = "options"
 
 # Create SQLAlchemy engine
 engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{db_name}")
+
+universe = ['AVGO', 'ORCL', 'IBM', 'MSFT', 'AAPL', 'GOOG', 'AMZN', 'CRM', 'META', 'NVDA']
 
 def get_earnings_dates():
     df = pd.read_csv("/Users/lunesm/School Stuff/Projects/EPS Option Reaction/earnings_dates.csv")
@@ -118,23 +121,11 @@ def fetch_atm_option_data(ticker, engine):
     return pd.DataFrame(results)
     
     
-
-universe = ['AAPL','MSFT','GOOGL','AMZN','AVGO','IBM','ORCL','ADBE', "CRM", "NVDA"]
-
-# Extract step
-
-
-def get_y(ticker):
-    # Okay
-    # This would typically involve using the actual stock price movement after earnings
-    return 0.0
-
 def get_momentum_vol(ticker, window_momentum=5, window_vol=21):
     df = []
-    dates = get_earnings_dates()[ticker]
 
-    for earnings_date in dates:
-        earnings_dt = datetime.strptime(earnings_date, "%Y-%m-%d")
+    for date in earnings_dates[ticker]:
+        earnings_dt = datetime.strptime(date, "%Y-%m-%d")
         # Shift to 2 trading days before earnings
         lookback_end = earnings_dt - (2 * BUSINESS_DAY)
         # Pull 60 calendar days of data before that
@@ -149,24 +140,25 @@ def get_momentum_vol(ticker, window_momentum=5, window_vol=21):
         realized_vol = (returns[-window_vol:].std() * (252**0.5)).item()
         avg_volume = data['Volume'][-window_vol:].mean().item()
         df.append({
-            "earnings_date": earnings_date,
+            "earnings_date": date,
             "momentum": momentum,
             "realized_vol": realized_vol,
             "avg_volume": avg_volume
         })
     return pd.DataFrame(df)
 
+# This function will extract the data from the dataframes and organize them into a csv file for each ticker
 def extract_data():
-    data = {}
     for ticker in universe:
-        data[ticker] = {}
-        data[ticker]['momentum_vol'] = get_momentum_vol(ticker)
-        data[ticker]['implied_vol'] = ...
-        data[ticker]['probability_surprise'] = ...
-        data[ticker]['vega'] =...
-    return data
+        df1 = fetch_atm_option_data(ticker, engine)
+        df2 = get_momentum_vol(ticker)
+        result = pd.concat([df1, df2], axis=1)
+        result.to_csv(f"'{ticker}'.csv", index=False)
+    return
 
-# Load
+extract_data()
+
+# Format as a data base of features and labels
 
 def get_Y():
     ...
@@ -174,12 +166,8 @@ def get_Y():
 def get_X():
     ...
 
-def clean_Y():
-    ...
 
-def clean_X():
     
-# We will need to generate an X and y dataset for the model
 
 
 
