@@ -69,11 +69,9 @@ void BOPEuroPut(double spot, double exercise, double rfRate, double timeToMaturi
 }
 
 
-// Nine ways to implement the binomial method for option valuation in Matlab (euro.9 is the fastest way for european options))
-
 int main() {
-    PromptData();
-    // The rest of the BOPM calculation would go here.
+    // This is basically just a place holder for now so we can run debugger without the
+   // compiler throwing a fit. SPOILER: It still throws a fit.
     std::cout << "BOPM calculation is not yet implemented." << '\n';
     return 0;
 }
