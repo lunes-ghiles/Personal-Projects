@@ -22,13 +22,13 @@
 // 5. Learn how the how to leverage dynamic memory allocation (isn't that the whole point of C++?)
 
 
-    // We're going to do some explaining here:
-    // This approach is based off of three important optimizations noted by Desmond J Higham
-    // when implementing the binomial option pricing model in MATLAB. 
-    // 1. We can find the cutoff point past which the option payoff is zero in order to avoid
-    //   calculating zero payoffs while also maintaining a smaller array for the terminal option values.
-    // 2. We can use binomial expansion to calculate with minimal iteration
-    // 3. We can use logarithms to avoid overflow/underflow issues.
+// We're going to do some explaining here:
+// This approach is based off of three important optimizations noted by Desmond J Higham
+// when implementing the binomial option pricing model in MATLAB. 
+// 1. We can find the cutoff point past which the option payoff is zero in order to avoid
+//   calculating zero payoffs while also maintaining a smaller array for the terminal option values.
+// 2. We can use binomial expansion to calculate with minimal iteration
+// 3. We can use logarithms to avoid overflow/underflow issues.
 
 double BOPEuroPut(double spot, double exercise, double rfRate, double timeToMaturity, double volatility, int steps) {
    // Intialize all the variables that we're going to be using 
