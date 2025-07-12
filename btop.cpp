@@ -101,5 +101,6 @@ int main() {
     std::cout << BOPEuroPut(65.5, 68, 0.048, 1, 0.325, 3) << std::endl;
     // Aaaaaand its wrong. 
     // DEBUGGING TIME
+    // I really should switch from VSCode to Cling, I thought I was built different
     return 0;
 }
